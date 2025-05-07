@@ -1,24 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Mines Game</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+  <div class="container">
+    <!-- LEFT PANEL -->
+    <div class="panel">
+      <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="manual">Manual</button>
+        <button class="mode-btn" data-mode="auto">Auto</button>
+      </div>
 
-<h1>Mines Game</h1>
-<div id="balance">Balance: $100.00</div>
-<div id="bet-amount-container">
-  <label for="bet-amount">Bet Amount: </label>
-  <input id="bet-amount" type="number" value="10" min="1" max="100" />
-</div>
-<div id="grid"></div>
-<div id="status">Game in progress</div>
-<div id="win-amount">Current Win: $0.00</div>
-<button onclick="resetGame()">Reset Game</button>
+      <div class="control-group">
+        <label>Bet Amount</label>
+        <div class="bet-input">
+          <input id="bet-amount" type="number" min="0.00000001" step="0.00000001" value="0.001"/>
+          <span class="currency">₿</span>
+          <div class="quick-btns">
+            <button data-func="half">½</button>
+            <button data-func="double">2×</button>
+          </div>
+        </div>
+      </div>
 
-<script src="script.js"></script>
+      <div class="control-group">
+        <label for="mines">Mines</label>
+        <select id="mines">
+          <!-- options 1–24 -->
+          ${Array.from({length:24},(_,i)=>`<option>${i+1}</option>`).join('')}
+        </select>
+      </div>
+
+      <button id="bet-button" class="bet-btn">Bet</button>
+      <div class="balance">Balance: <span id="balance">100.00</span>₿</div>
+    </div>
+
+    <!-- RIGHT GRID -->
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
