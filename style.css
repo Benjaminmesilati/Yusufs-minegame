@@ -3,7 +3,6 @@
   --panel-bg: #1c262f;
   --btn-green: #00e976;
   --text-light: #cfd8dc;
-  --text-dark: #455a64;
   --cell-bg: #29414d;
   --cell-border: #1e2a32;
 }
@@ -20,11 +19,8 @@ body {
   justify-content: center;
 }
 
-.container {
-  display: flex;
-}
+.container { display: flex; }
 
-/* LEFT PANEL */
 .panel {
   width: 280px;
   background: var(--panel-bg);
@@ -54,15 +50,8 @@ body {
   border-radius: 20px;
 }
 
-.control-group {
-  margin-bottom: 20px;
-}
-
-.control-group label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 14px;
-}
+.control-group { margin-bottom: 20px; }
+.control-group label { display: block; margin-bottom: 6px; font-size: 14px; }
 
 .bet-input {
   display: flex;
@@ -80,9 +69,7 @@ body {
   font-size: 16px;
 }
 
-.bet-input .currency {
-  margin: 0 8px;
-}
+.bet-input .currency { margin: 0 8px; }
 
 .quick-btns button {
   background: transparent;
@@ -114,16 +101,11 @@ body {
   margin-bottom: 20px;
 }
 
-.balance {
-  text-align: center;
-  font-size: 14px;
-}
+.balance { text-align: center; font-size: 14px; }
 
-/* RIGHT GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(5, 60px);
-  grid-template-rows: repeat(5, 60px);
   gap: 10px;
   padding: 20px;
   background: var(--panel-bg);
@@ -144,4 +126,3 @@ body {
 .cell.revealed.safe { background: lightgreen; }
 .cell.revealed.mine { background: tomato; }
 .cell.disabled { pointer-events: none; opacity: 0.6; }
-
