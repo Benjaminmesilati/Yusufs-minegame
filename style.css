@@ -1,0 +1,44 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+#grid {
+  display: grid;
+  grid-template-columns: repeat(5, 60px);
+  gap: 10px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.cell {
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ddd;
+  border: 2px solid #999;
+  transition: all 0.2s;
+}
+
+.revealed.safe {
+  background-color: lightgreen;
+}
+
+.revealed.mine {
+  background-color: tomato;
+}
+
+#status {
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+#balance {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
