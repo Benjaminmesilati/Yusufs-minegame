@@ -38,7 +38,12 @@ body {
   font-weight: bold;
 }
 
-#balance {
+#balance, #win-amount {
   margin-bottom: 15px;
   font-size: 18px;
 }
+
+#bet-amount-container {
+  margin-bottom: 15px;
+}
+
