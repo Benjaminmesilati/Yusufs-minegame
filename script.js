@@ -1,8 +1,7 @@
-// -- Elements --
+// --- CACHED DOM NODES & STATE (same as before) ---
 const gridEl      = document.getElementById('grid');
 const betBtn      = document.getElementById('bet-button');
 const betInput    = document.getElementById('bet-amount');
-const quickBtns   = document.querySelectorAll('.quick-btns button');
 const minesSelect = document.getElementById('mines');
 const balanceEl   = document.getElementById('balance');
 const modeBtns    = document.querySelectorAll('.mode-btn');
@@ -10,25 +9,7 @@ const modeBtns    = document.querySelectorAll('.mode-btn');
 let balance = 100;
 let grid, revealed, inRound = false;
 
-// -- Mode Toggle (UI only) --
-modeBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    modeBtns.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
-
-// -- Quick-bet buttons (½, 2×) --
-quickBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    let val = parseFloat(betInput.value) || 0;
-    if (btn.dataset.func === 'half')  val /= 2;
-    if (btn.dataset.func === 'double') val *= 2;
-    betInput.value = val.toFixed(8);
-  });
-});
-
-// -- Helpers --
+// --- UTILS (same as before) ---
 function updateBalance() {
   balanceEl.textContent = balance.toFixed(8);
 }
@@ -44,42 +25,45 @@ function generateGrid(size = 5, mineCount = 3) {
   revealed = Array(total).fill(false);
 }
 
-// -- Render Grid --
+// --- RENDER (same as before) ---
 function renderGrid() {
   gridEl.innerHTML = '';
   grid.forEach((cell, idx) => {
     const div = document.createElement('div');
     div.className = 'cell' + (revealed[idx] ? ' revealed ' + cell : '');
     if (revealed[idx]) div.textContent = cell === 'mine' ? '💣' : '💎';
-    if (!inRound)     div.classList.add('disabled');
+    if (!inRound) div.classList.add('disabled');
     div.addEventListener('click', () => handleCell(idx));
     gridEl.appendChild(div);
   });
 }
 
-// -- Handle Tile Click --
+// --- UPDATED handleCell! ---
 function handleCell(idx) {
+  // only allow clicks during a round on unrevealed cells
   if (!inRound || revealed[idx]) return;
   revealed[idx] = true;
 
-  const bet    = parseFloat(betInput.value) || 0;
-  const mines  = parseInt(minesSelect.value, 10);
+  const bet   = parseFloat(betInput.value) || 0;
 
   if (grid[idx] === 'mine') {
-    // lose
+    // You hit a mine → round ends
     balance   -= bet;
     inRound    = false;
-    betBtn.disabled = false;
+    betBtn.disabled = false;        // re-enable betting
+    alert(`💥 Boom! You lost ${bet.toFixed(8)}₿`);
   } else {
-    // win 1× per safe tile
+    // Safe pick → earn your bet and keep going
     balance   += bet;
+    alert(`💎 Nice! You won ${bet.toFixed(8)}₿ — pick another tile.`);
+    // inRound stays true, betBtn stays disabled
   }
 
   updateBalance();
   renderGrid();
 }
 
-// -- Start Round --
+// --- START ROUND (same as before) ---
 betBtn.addEventListener('click', () => {
   const bet   = parseFloat(betInput.value) || 0;
   const mines = parseInt(minesSelect.value, 10);
@@ -95,7 +79,7 @@ betBtn.addEventListener('click', () => {
   renderGrid();
 });
 
-// -- Init --
+// --- INITIALIZE ---
 updateBalance();
 generateGrid(5, parseInt(minesSelect.value,10));
 renderGrid();
