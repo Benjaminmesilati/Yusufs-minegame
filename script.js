@@ -1,76 +1,90 @@
-const gridSize = 5;
-const mineCount = 5;
-let grid = [];
-let revealed = [];
-let balance = 100;
-let betAmount = 10;  // Default bet amount
-let winAmount = 0;
-const statusText = document.getElementById('status');
-const balanceText = document.getElementById('balance');
-const winAmountText = document.getElementById('win-amount');
-const betInput = document.getElementById('bet-amount');
+// -- Cached DOM --
+const gridEl      = document.getElementById('grid');
+const betBtn      = document.getElementById('bet-button');
+const betInput    = document.getElementById('bet-amount');
+const minesSelect = document.getElementById('mines');
+const balanceEl   = document.getElementById('balance');
+const modeBtns    = document.querySelectorAll('.mode-btn');
 
-// Update balance and win amount displays
-function updateDisplay() {
-  balanceText.textContent = `Balance: $${balance.toFixed(2)}`;
-  winAmountText.textContent = `Current Win: $${winAmount.toFixed(2)}`;
-}
+let balance   = 100;
+let grid      = [];
+let revealed  = [];
+let inRound   = false;
 
-// Update bet amount when input changes
-betInput.addEventListener('input', () => {
-  betAmount = parseInt(betInput.value, 10) || 0;
+// -- Mode toggle (just UI stub) --
+modeBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    modeBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  });
 });
 
-// Generate a random grid with mines
-function generateGrid() {
-  const totalCells = gridSize * gridSize;
-  const minePositions = new Set();
-  while (minePositions.size < mineCount) {
-    minePositions.add(Math.floor(Math.random() * totalCells));
-  }
-  grid = Array(totalCells).fill("safe");
-  minePositions.forEach(pos => grid[pos] = "mine");
-  revealed = Array(totalCells).fill(false);
+// -- Helpers --
+function updateBalance() {
+  balanceEl.textContent = balance.toFixed(8);
 }
 
-// Handle user click on grid cell
-function handleClick(index) {
-  if (revealed[index] || statusText.textContent !== "Game in progress") return;
+function generateGrid(size = 5, mineCount = 3) {
+  const total = size * size;
+  const mines = new Set();
+  while (mines.size < mineCount) {
+    mines.add(Math.floor(Math.random() * total));
+  }
+  grid     = Array(total).fill('safe');
+  mines.forEach(i=>grid[i] = 'mine');
+  revealed = Array(total).fill(false);
+}
 
-  revealed[index] = true;
+// -- Render --
+function renderGrid() {
+  gridEl.innerHTML = '';
+  grid.forEach((cell, idx) => {
+    const div = document.createElement('div');
+    div.className = 'cell' + (revealed[idx] ? ' revealed ' + cell : '');
+    if (revealed[idx]) {
+      div.textContent = cell === 'mine' ? '💣' : '💎';
+    }
+    if (!inRound) div.classList.add('disabled');
+    div.addEventListener('click', ()=> handleCell(idx));
+    gridEl.appendChild(div);
+  });
+}
 
-  if (grid[index] === "mine") {
-    statusText.textContent = `You hit a mine! You lose $${betAmount}.`;
-    balance -= betAmount;
-    winAmount = 0;
+// -- Cell click handler --
+function handleCell(idx) {
+  if (!inRound || revealed[idx]) return;
+  revealed[idx] = true;
+
+  const bet = parseFloat(betInput.value) || 0;
+  if (grid[idx] === 'mine') {
+    balance -= bet;
+    inRound = false;
+    betBtn.disabled = false;
   } else {
-    statusText.textContent = "Safe! You win $5.";
-    balance += 5;
-    winAmount += 5;
+    // simple 1× payout per diamond
+    balance += bet;
   }
 
-  updateDisplay();
-  checkGameOver();
+  updateBalance();
+  renderGrid();
 }
 
-// Check if game is over
-function checkGameOver() {
-  if (balance <= 0) {
-    statusText.textContent = "Game Over! You're out of money!";
-    return;
+// -- Start a new round --
+betBtn.addEventListener('click', () => {
+  const bet   = parseFloat(betInput.value);
+  const mines = parseInt(minesSelect.value, 10);
+
+  if (bet <= 0 || bet > balance) {
+    return alert('Invalid bet');
   }
-}
 
-// Reset the game
-function resetGame() {
-  if (balance <= 0) return;
-  
-  generateGrid();
-  statusText.textContent = "Game in progress";
-  winAmount = 0;
-  updateDisplay();
-}
+  generateGrid(5, mines);
+  inRound = true;
+  betBtn.disabled = true;
+  updateBalance();
+  renderGrid();
+});
 
-// Initial setup
-generateGrid();
-updateDisplay();
+// -- Init --
+updateBalance();
+renderGrid();
