@@ -10,8 +10,13 @@
 
 <h1>Mines Game</h1>
 <div id="balance">Balance: $100.00</div>
+<div id="bet-amount-container">
+  <label for="bet-amount">Bet Amount: </label>
+  <input id="bet-amount" type="number" value="10" min="1" max="100" />
+</div>
 <div id="grid"></div>
 <div id="status">Game in progress</div>
+<div id="win-amount">Current Win: $0.00</div>
 <button onclick="resetGame()">Reset Game</button>
 
 <script src="script.js"></script>
